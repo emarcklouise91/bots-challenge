@@ -1,0 +1,4 @@
+# Dependencies
+.env
+dist
+node_modules
