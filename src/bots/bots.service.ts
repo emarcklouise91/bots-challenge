@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { from, Observable } from 'rxjs';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { BotsEntity } from './bots.entity';
 import { BotsInterface } from './bots.interface';
 import {v4 as uuidv4} from 'uuid';
@@ -26,13 +26,27 @@ export class BotsService {
         }));
     }
 
-    private bots: any = [{ id: 1, name: 'Marck', gender: 'male', avatar: 'marckAvatar.png'}];
-
-    findAll() {
-        return this.bots;
+    findAll(): Observable<BotsInterface[]> {
+        return from(this.botsRepository.find());
     }
 
-    findOneById(botId: number) {
-        return this.bots.find(bot => bot.id === botId);
+    findAllByPurpose(purpose: "healthcare" | "home" | "logistics"): Observable<BotsInterface[]> {
+        return from(this.botsRepository.find({
+            where: [{purpose: purpose}]
+        }));
+    }
+
+    findOneById(botId: number): Observable<BotsInterface> {
+        return from(this.botsRepository.findOne({
+            where: [{id: botId}]
+        }));
+    }
+
+    update(botId: number, parameters: BotsInterface): Observable<UpdateResult> {
+        return from(this.botsRepository.update(botId, parameters));
+    }
+
+    delete(botId: number): Observable<DeleteResult> {
+        return from(this.botsRepository.delete(botId));
     }
 }

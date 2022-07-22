@@ -15,6 +15,9 @@ export class BotsEntity {
     name: string;
 
     @Column()
+    purpose: "healthcare" | "home" | "logistics"
+
+    @Column()
     gender: "male" | "female";
 
     @Column()

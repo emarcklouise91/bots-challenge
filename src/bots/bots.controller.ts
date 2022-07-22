@@ -1,5 +1,6 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { Observable } from 'rxjs';
+import { DeleteResult, UpdateResult } from 'typeorm';
 import { BotsInterface } from './bots.interface';
 import { BotsService } from './bots.service';
 
@@ -12,13 +13,31 @@ export class BotsController {
         return this.botsService.create(requestBody);
     }
 
-    @Get('all')
-    getAll(): any {
+    @Get()
+    getAll() {
         return this.botsService.findAll();
     }
 
+    @Get(':purpose')
+    getAllByPurpose(@Param('purpose') purpose: "healthcare" | "home" | "logistics") {
+        return this.botsService.findAllByPurpose(purpose);
+    }
+
     @Get(':id')
-    getById(@Param('id') id: string): any {
-        return this.botsService.findOneById(Number(id));
+    getById(@Param('id') botId: string) {
+        return this.botsService.findOneById(Number(botId));
+    }
+
+    @Put(':id')
+    update(
+        @Param('id') botId: number,
+        @Body() requestBody: BotsInterface
+    ): Observable<UpdateResult> {
+        return this.botsService.update(Number(botId), requestBody); // enhance this by returning updated record
+    }
+
+    @Delete(':id')
+    delete(@Param('id') botId: number): Observable<DeleteResult> {
+        return this.botsService.delete(Number(botId));
     }
 }
